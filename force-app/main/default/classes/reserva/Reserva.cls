@@ -8,7 +8,7 @@ public with sharing class Reserva {
     public StatusReserva status { get; set; }
     public Reserva() {
         this.mesa = null;
-        this.status = StatusReserva.PENDENTE;
+        this.status = null;
     }
     public Reserva(Cliente cliente, Restaurante restaurante, Integer quantidadePessoas, LocalMesa localPreferencia, PeriodoReserva periodo) {
         this.cliente = cliente;
@@ -17,6 +17,6 @@ public with sharing class Reserva {
         this.localPreferencia = localPreferencia;
         this.periodo = periodo;
         this.mesa = null;
-        this.status = StatusReserva.PENDENTE;
+        this.status = null;
     }
 }

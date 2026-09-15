@@ -15,6 +15,7 @@ public with sharing class RelatorioReservasService {
             }
             relatorio.put(cpf, reservasCpf);
         }
+        
         return relatorio;
     }
 }

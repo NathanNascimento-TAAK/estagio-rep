@@ -23,18 +23,6 @@ public with sharing class Restaurante {
             System.debug('A mesa desejada já existe ou não há capacidade.');
         }
     }
-
-    public List<Mesa> buscarDisponibilidade(Integer qtdPessoas, LocalMesa local) {
-        List<Mesa> mesasDisponiveis = new List<Mesa>();
-        for(Mesa mesa : mesas) {
-            if(mesa.capacidade >= qtdPessoas && mesa.local == local) {
-                mesasDisponiveis.add(mesa);
-            }
-        }
-        
-        return mesasDisponiveis;
-    }
-
     
     public void adicionarMesas(List<Mesa> mesas) {
         for(Mesa mesa : mesas) {
