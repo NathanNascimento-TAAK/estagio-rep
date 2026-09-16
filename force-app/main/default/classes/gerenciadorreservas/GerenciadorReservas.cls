@@ -1,46 +1,86 @@
 public with sharing class GerenciadorReservas {
-    public GerenciadorReservas() {
+    private List<Reserva> reservas;
+    private List<Reserva> reservasPendentes;
+    private PoliticaAlocacaoMesa politicaAlocacao;
+    private PoliticaPromocaoListaEspera politicaPromocao;
 
+    public GerenciadorReservas() {
+        this(new MenorMesaViavel(), new FifoListaEspera());
     }
 
-    public void criarReserva(Cliente cliente, Restaurante restaurante, Integer quantidadePessoas, LocalMesa localPreferencia, PeriodoReserva periodo, Boolean aceitaListEspera) {
-        List<Mesa> mesasEncontradas = buscarDisponibilidade(quantidadePessoas, localPreferencia);
-        for(Mesa mesa : mesasEncontradas) {
-            for(Reserva reserva : reservas) {
-                if(reserva.mesa == mesa && reserva.localPreferencia == localPreferencia && reserva.status == StatusReserva.CONFIRMADA) {
-                    mesasEncontradas.remove(mesa);
+    public GerenciadorReservas(PoliticaAlocacaoMesa politicaAlocacao, PoliticaPromocaoListaEspera politicaPromocao) {
+        this.reservas = new List<Reserva>();
+        this.reservasPendentes = new List<Reserva>();
+        this.politicaAlocacao = politicaAlocacao;
+        this.politicaPromocao = politicaPromocao;
+    }
+
+    public void criarReserva(Cliente cliente, Restaurante restaurante, Integer quantidadePessoas, LocalMesa localPreferencia, PeriodoReserva periodo, Boolean aceitaListaEspera) {
+        QuantidadePessoas quantidade = new QuantidadePessoas(quantidadePessoas);
+        List<Mesa> mesasDisponiveis = buscarDisponibilidade(restaurante, quantidade, localPreferencia, periodo);
+        Mesa mesa = politicaAlocacao.selecionarMesa(mesasDisponiveis, quantidade, localPreferencia, periodo);
+
+        Reserva reserva = new Reserva(cliente, restaurante, quantidadePessoas, localPreferencia, periodo);
+        if (mesa != null) {
+            reserva.mesa = mesa;
+            reserva.confirmar();
+            reservas.add(reserva);
+            restaurante.registrarReserva(reserva);
+        } else if (aceitaListaEspera) {
+            reservasPendentes.add(reserva);
+            restaurante.registrarReserva(reserva);
+        }
+    }
+
+    private List<Mesa> buscarDisponibilidade(
+        Restaurante restaurante,
+        QuantidadePessoas quantidade,
+        LocalMesa localizacao,
+        PeriodoReserva periodo
+    ) {
+        List<Mesa> disponiveis = new List<Mesa>();
+        for (Mesa mesa : restaurante.getMesas()) {
+            if (!mesa.comporta(quantidade) || mesa.getLocalizacao() != localizacao) {
+                continue;
+            }
+            Boolean ocupada = false;
+            for (Reserva reserva : reservas) {
+                if (
+                    reserva.restaurante == restaurante
+                    && reserva.mesa == mesa
+                    && reserva.periodo == periodo
+                    && reserva.status instanceof EstadoConfirmado
+                ) {
+                    ocupada = true;
+                    break;
                 }
             }
+            if (!ocupada) {
+                disponiveis.add(mesa);
+            }
         }
-        if(mesasEncontradas.size() > 0) {
-            Reserva reserva = new Reserva(cliente, restaurante, quantidadePessoas, localPreferencia, periodo);
-            reserva.status = StatusReserva.CONFIRMADA;
-            reserva.mesa = mesasEncontradas[0];
-            reservas.add(reserva);
-            System.debug('Reserva confirmada!');
-        }
-        else if(aceitaListEspera){
-            Reserva reserva = new Reserva(cliente, restaurante, quantidadePessoas, localPreferencia, periodo);
-            reserva.status = StatusReserva.PENDENTE;
-            reservasPendentes.add(reserva);
-            System.debug('Você está na lista de espera!');
-        }
-        else {
-            System.debug('Não foi possivel encontrar uma mesa com essas especificações.');
-        }
+        return disponiveis;
     }
 
     public void cancelarReserva(Reserva reserva) {
         Mesa mesaDisponivel = reserva.mesa;
-        reservas.remove(reserva);
-        for(Reserva rsvPendente : reservasPendentes) {
-            if(rsvPendente.quantidadePessoas <= mesaDisponivel.capacidade && rsvPendente.periodo == reserva.periodo && rsvPendente.localPreferencia == reserva.localPreferencia) {
-                rsvPendente.mesa = mesaDisponivel;
-                rsvPendente.status = StatusReserva.CONFIRMADA;
-                reservasPendentes.remove(rsvPendente);
-                reservas.add(rsvPendente);
-                break;
-            }
+        reserva.cancelar();
+        reservas.remove(reservas.indexOf(reserva));
+        if (mesaDisponivel == null) {
+            return;
+        }
+
+        Reserva promovida = politicaPromocao.selecionarReserva(
+            reservasPendentes,
+            mesaDisponivel,
+            reserva.periodo,
+            reserva.localPreferencia
+        );
+        if (promovida != null) {
+            promovida.mesa = mesaDisponivel;
+            promovida.promover();
+            reservasPendentes.remove(reservasPendentes.indexOf(promovida));
+            reservas.add(promovida);
         }
     }
 }

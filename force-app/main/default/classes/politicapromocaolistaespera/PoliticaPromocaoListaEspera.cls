@@ -1,6 +1,3 @@
-public with sharing class PoliticaPromocaoListaEspera {
-    
-    public PoliticaPromocaoListaEspera() {
-
-    }
+public interface PoliticaPromocaoListaEspera {
+    Reserva selecionarReserva(List<Reserva> reservas, Mesa mesa, PeriodoReserva periodo, LocalMesa localizacao);
 }

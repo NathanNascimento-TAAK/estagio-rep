@@ -1,8 +1,33 @@
 public with sharing class Mesa {
-    public IndentificadorMesa numero { get; set; }
-    public QuantidadePessoas capacidade { get; set; }
-    public LocalMesa local { get; set; }
-    public Mesa() {
+    private IndentificadorMesa identificador;
+    private QuantidadePessoas capacidade;
+    private LocalMesa localizacao;
 
+    public Mesa(
+        IndentificadorMesa identificador,
+        QuantidadePessoas capacidade,
+        LocalMesa localizacao
+    ) {
+        this.identificador = identificador;
+        this.capacidade = capacidade;
+        this.localizacao = localizacao;
+    }
+
+    public IndentificadorMesa getIdentificador() {
+        return identificador;
+    }
+
+    public QuantidadePessoas getCapacidade() {
+        return capacidade;
+    }
+
+    public LocalMesa getLocalizacao() {
+        return localizacao;
+    }
+
+    public Boolean comporta(QuantidadePessoas quantidadePessoas) {
+        return capacidade != null
+            && quantidadePessoas != null
+            && capacidade.quantidadePessoas >= quantidadePessoas.quantidadePessoas;
     }
 }

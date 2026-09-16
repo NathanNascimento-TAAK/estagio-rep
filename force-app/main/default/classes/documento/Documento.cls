@@ -6,12 +6,12 @@ public with sharing class Documento {
     }
 
     public Boolean validarDocumento(string documento) {
-        if(documento.length() == 11 && !String.isBlank(documento)) return true;
+        if(!String.isBlank(documento) && documento.length() == 11) return true;
         else return false;
     }
 
-    public Integer getCpf() {
-        return this.cpf();
+    public String getDocumento() {
+        return documento;
     }
 
 }

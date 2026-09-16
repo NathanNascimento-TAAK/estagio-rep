@@ -6,10 +6,12 @@ public with sharing class Reserva {
     public LocalMesa localPreferencia{ get; set; }
     public PeriodoReserva periodo { get; set; }
     public EstadoReserva status { get; set; }
+    
     public Reserva() {
         this.mesa = null;
-        this.status = null;
+        this.status = new EstadoPendente();
     }
+    
     public Reserva(Cliente cliente, Restaurante restaurante, Integer quantidadePessoas, LocalMesa localPreferencia, PeriodoReserva periodo) {
         this.cliente = cliente;
         this.restaurante = restaurante;
@@ -17,33 +19,18 @@ public with sharing class Reserva {
         this.localPreferencia = localPreferencia;
         this.periodo = periodo;
         this.mesa = null;
-        this.status = null;
+        this.status = new EstadoPendente();
     }
 
     public void confirmar() {
-        if(status instanceOf EstadoReserva) {
-            status = new EstadoConfirmado();
-        }
-        else {
-            System.debug('Não foi possivel realizar a confirmação desta reserva!');
-        }
+        status = status.confirmar();
     }
 
     public void cancelar() {
-        if(status instanceOf EstadoPendente || status instanceOf EstadoConfirmado) {
-            status = new EstadoCancelado();
-        }
-        else {
-            System.debug('Não foi possivel cancelar esta reserva!');
-        }
+        status = status.cancelar();
     }
 
     public void promover() {
-        if(status instanceOf EstadoPendente) {
-            status = new EstadoConfirmado();
-        }
-        else {
-            System.debug('Não foi possivel promover esta reserva!');
-        }
+        status = status.promover();
     }
 }

@@ -1,11 +1,20 @@
-public with sharing class Cliente extends EntidadeBase {
-    public string nome { get; set; }
-    public Documento cpf { get; set; }
-    public Cliente() {
-        
-    }
-    public Cliente(string nome, Documento cpf) {
-        this.cpf = cpf;
+public with sharing class Cliente {
+    private Documento documento;
+    private String nome;
+
+    public Cliente(
+        Documento documento,
+        String nome
+    ) {
+        this.documento = documento;
         this.nome = nome;
+    }
+
+    public Documento getDocumento() {
+        return documento;
+    }
+
+    public String getNome() {
+        return nome;
     }
 }

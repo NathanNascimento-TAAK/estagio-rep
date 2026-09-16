@@ -7,8 +7,8 @@ public with sharing class RelatorioReservasService {
         for(Documento cpf : cpfs) {
             List<Reserva> reservasCpf = new List<Reserva>();
             for(Restaurante restaurante : restaurantes) {
-                for(Reserva reserva : restaurante.reservas) {
-                    if(reserva.cliente.cpf == cpf) {
+                for(Reserva reserva : restaurante.getReservas()) {
+                    if(reserva.cliente.getDocumento().getDocumento() == cpf.getDocumento()) {
                         reservasCpf.add(reserva);
                     }
                 }
