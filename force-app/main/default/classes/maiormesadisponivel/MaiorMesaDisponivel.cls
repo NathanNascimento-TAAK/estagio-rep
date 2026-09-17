@@ -4,9 +4,9 @@ public with sharing class MaiorMesaDisponivel implements PoliticaAlocacaoMesa {
     }
 
     public Mesa selecionarMesa(List<Mesa> mesas, QuantidadePessoas qtdPessoas, LocalMesa localizacao, PeriodoReserva periodo) {
-        Mesa maiorMesa;
+        Mesa maiorMesa = new Mesa();
         for (Mesa mesa : mesas) {
-            if (!mesa.comporta(qtdPessoas) || mesa.getLocalizacao() != localizacao) {
+            if (mesa.getCapacidade() < qtdPessoas || mesa.getLocalizacao() != localizacao) {
                 continue;
             }
             if (maiorMesa == null || mesa.getCapacidade().quantidadePessoas > maiorMesa.getCapacidade().quantidadePessoas) {

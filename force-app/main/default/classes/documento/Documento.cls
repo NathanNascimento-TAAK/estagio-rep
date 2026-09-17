@@ -2,7 +2,7 @@ public with sharing class Documento {
     private final string documento { get; set; }
     public Documento(string documento) {
         if(validarDocumento(documento)) this.documento = documento;
-        else System.debug('O documento informado é inválido!');
+        else throw new IllegalArgumentException('Documento inválido. O documento deve conter 11 dígitos e não pode ser nulo ou vazio.');
     }
 
     public Boolean validarDocumento(string documento) {

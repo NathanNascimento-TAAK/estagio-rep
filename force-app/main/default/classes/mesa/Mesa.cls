@@ -3,11 +3,7 @@ public with sharing class Mesa {
     private QuantidadePessoas capacidade;
     private LocalMesa localizacao;
 
-    public Mesa(
-        IndentificadorMesa identificador,
-        QuantidadePessoas capacidade,
-        LocalMesa localizacao
-    ) {
+    public Mesa(IndentificadorMesa identificador, QuantidadePessoas capacidade, LocalMesa localizacao) {
         this.identificador = identificador;
         this.capacidade = capacidade;
         this.localizacao = localizacao;
@@ -23,11 +19,5 @@ public with sharing class Mesa {
 
     public LocalMesa getLocalizacao() {
         return localizacao;
-    }
-
-    public Boolean comporta(QuantidadePessoas quantidadePessoas) {
-        return capacidade != null
-            && quantidadePessoas != null
-            && capacidade.quantidadePessoas >= quantidadePessoas.quantidadePessoas;
     }
 }

@@ -4,9 +4,9 @@ public with sharing class PoliticaPrioridadeSalao implements PoliticaAlocacaoMes
     }
 
     public Mesa selecionarMesa(List<Mesa> mesas, QuantidadePessoas qtdPessoas, LocalMesa localizacao, PeriodoReserva periodo) {
-        Mesa menorMesa;
+        Mesa menorMesa = new Mesa();
         for (Mesa mesa : mesas) {
-            if (mesa.getLocalizacao() == LocalMesa.SALAO && mesa.comporta(qtdPessoas) && (menorMesa == null || mesa.getCapacidade().quantidadePessoas < menorMesa.getCapacidade().quantidadePessoas)) {
+            if (mesa.getLocalizacao() == LocalMesa.SALAO && mesa.getCapacidade() >= qtdPessoas && (menorMesa == null || mesa.getCapacidade().quantidadePessoas < menorMesa.getCapacidade().quantidadePessoas)) {
                 menorMesa = mesa;
             }
         }

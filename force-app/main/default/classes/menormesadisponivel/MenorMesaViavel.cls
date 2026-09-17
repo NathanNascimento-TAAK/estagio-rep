@@ -4,9 +4,9 @@ public with sharing class MenorMesaViavel implements PoliticaAlocacaoMesa {
     }
 
     public Mesa selecionarMesa(List<Mesa> mesas, QuantidadePessoas qtdPessoas, LocalMesa localizacao, PeriodoReserva periodo) {
-        Mesa menorMesa;
+        Mesa menorMesa = new Mesa();
         for (Mesa mesa : mesas) {
-            if (!mesa.comporta(qtdPessoas) || mesa.getLocalizacao() != localizacao) {
+            if (mesa.getCapacidade() < qtdPessoas || mesa.getLocalizacao() != localizacao) {
                 continue;
             }
             if (menorMesa == null || mesa.getCapacidade().quantidadePessoas < menorMesa.getCapacidade().quantidadePessoas) {
